@@ -25,6 +25,16 @@ function +vi-git-untracked() {
     fi
 }
 
+function +vi-hg-untracked() {
+    if [[ -a $(hg root 2> /dev/null) && \
+          -n $(hg status | grep -E '^\?' 2> /dev/null | tail -n1) ]]; then
+        hook_com[unstaged]+=" $(print_icon 'VCS_UNTRACKED_ICON')"
+        VCS_WORKDIR_HALF_DIRTY=true
+    else
+        VCS_WORKDIR_HALF_DIRTY=false
+    fi
+}
+
 function +vi-git-aheadbehind() {
     local ahead behind branch_name
     local -a gitstatus
@@ -82,6 +92,21 @@ function +vi-git-tagname() {
                 # We are on both a tag and a branch; print both by appending the tag name.
                 hook_com[branch]+=" $(print_icon 'VCS_TAG_ICON')${tag}"
             fi
+        fi
+    fi
+}
+
+function +vi-hg-tagname() {
+    if [[ "$POWERLEVEL9K_VCS_HIDE_TAGS" == "false" && -a $(hg root 2> /dev/null) ]]; then
+        id=$(hg id 2>/dev/null)
+
+        id=(${=id})
+        id[1]=()
+
+        tag=$id
+
+        if [[ -n "${tag}" ]] ; then
+            hook_com[branch]+=" $(print_icon 'VCS_TAG_ICON')${tag}"
         fi
     fi
 }
