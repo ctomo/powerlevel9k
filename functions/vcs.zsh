@@ -98,12 +98,7 @@ function +vi-git-tagname() {
 
 function +vi-hg-tagname() {
     if [[ "$POWERLEVEL9K_VCS_HIDE_TAGS" == "false" && -a $(hg root 2> /dev/null) ]]; then
-        id=$(hg id 2>/dev/null)
-
-        id=(${=id})
-        id[1]=()
-
-        tag=$id
+        tag=$(hg id -t 2>/dev/null)
 
         if [[ -n "${tag}" ]] ; then
             hook_com[branch]+=" $(print_icon 'VCS_TAG_ICON')${tag}"
